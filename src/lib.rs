@@ -21,6 +21,14 @@ impl Cell {
     fn is_alive(&self) -> bool {
         *self == Cell::Alive
     }
+
+    fn symbol(&self) -> char {
+        if self.is_alive() {
+            '◼'
+        } else {
+            '◻'
+        }
+    }
 }
 
 #[wasm_bindgen]
@@ -34,7 +42,7 @@ impl Display for Universe {
     fn fmt(&self, formatter: &mut Formatter) -> FormatResult {
         for line in self.cells.as_slice().chunks(self.width as usize) {
             for &cell in line {
-                let symbol = if cell.is_alive() { '◼' } else { '◻' };
+                let symbol = cell.symbol();
                 write!(formatter, "{}", symbol)?;
             }
             write!(formatter, "\n")?;
