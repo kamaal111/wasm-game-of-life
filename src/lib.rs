@@ -1,8 +1,12 @@
 mod utils;
 
-use js_sys::Math as JSMath;
-use std::fmt::{Display, Formatter, Result as FormatResult};
 use wasm_bindgen::prelude::*;
+
+extern crate js_sys;
+use js_sys::Math as JSMath;
+
+extern crate fixedbitset;
+use fixedbitset::FixedBitSet;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -18,39 +22,11 @@ pub enum Cell {
     Alive = 1,
 }
 
-impl Cell {
-    fn is_alive(&self) -> bool {
-        *self == Cell::Alive
-    }
-
-    fn symbol(&self) -> char {
-        if self.is_alive() {
-            '◼'
-        } else {
-            '◻'
-        }
-    }
-}
-
 #[wasm_bindgen]
 pub struct Universe {
     pub width: u32,
     pub height: u32,
-    cells: Vec<Cell>,
-}
-
-impl Display for Universe {
-    fn fmt(&self, formatter: &mut Formatter) -> FormatResult {
-        for line in self.cells.as_slice().chunks(self.width as usize) {
-            for &cell in line {
-                let symbol = cell.symbol();
-                write!(formatter, "{}", symbol)?;
-            }
-            write!(formatter, "\n")?;
-        }
-
-        Ok(())
-    }
+    cells: FixedBitSet,
 }
 
 #[wasm_bindgen]
@@ -59,14 +35,12 @@ impl Universe {
         let width = 64;
         let height = 64;
 
-        let cells = (0..(width * height))
-            .map(|_i| {
-                if JSMath::random() < 0.5 {
-                    return Cell::Alive;
-                }
-                Cell::Dead
-            })
-            .collect();
+        let size = (width * height) as usize;
+        let mut cells = FixedBitSet::with_capacity(size);
+
+        for i in 0..size {
+            cells.set(i, JSMath::random() < 0.5);
+        }
 
         Universe {
             width,
@@ -75,41 +49,36 @@ impl Universe {
         }
     }
 
-    pub fn cells(&self) -> *const Cell {
-        self.cells.as_ptr()
-    }
-
-    pub fn render(&self) -> String {
-        self.to_string()
+    pub fn cells(&self) -> *const u32 {
+        self.cells.as_slice().as_ptr()
     }
 
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
 
         for row in 0..self.height {
-            for col in 0..self.width {
-                let idx = self.get_index(row, col);
+            for column in 0..self.width {
+                let idx = self.get_index(row, column);
                 let cell = self.cells[idx];
-                let live_neighbors = self.live_neighbor_count(row, col);
+                let live_neighbors = self.live_neighbor_count(row, column);
 
                 let next_cell = match (cell, live_neighbors) {
                     // Rule 1: Any live cell with fewer than two live neighbors
                     // dies, as if caused by underpopulation.
-                    (Cell::Alive, x) if x < 2 => Cell::Dead,
+                    (true, x) if x < 2 => false,
                     // Rule 2: Any live cell with two or three live neighbors
                     // lives on to the next generation.
-                    (Cell::Alive, 2) | (Cell::Alive, 3) => Cell::Alive,
+                    (true, 2) | (true, 3) => true,
                     // Rule 3: Any live cell with more than three live
                     // neighbors dies, as if by overpopulation.
-                    (Cell::Alive, x) if x > 3 => Cell::Dead,
+                    (true, x) if x > 3 => false,
                     // Rule 4: Any dead cell with exactly three live neighbors
                     // becomes a live cell, as if by reproduction.
-                    (Cell::Dead, 3) => Cell::Alive,
+                    (false, 3) => true,
                     // All other cells remain in the same state.
                     (otherwise, _) => otherwise,
                 };
-
-                next[idx] = next_cell;
+                next.set(idx, next_cell);
             }
         }
 

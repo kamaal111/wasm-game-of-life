@@ -51,12 +51,19 @@ const drawGrid = () => {
 
 const getIndex = (row, column) => row * universeWidth + column;
 
+const bitIsSet = (number, array) => {
+  const byte = Math.floor(number / 8);
+  const mask = 1 << number % 8;
+  return (array[byte] & mask) === mask;
+};
+
 const drawCells = () => {
   const cellsPointer = universe.cells();
+
   const cells = new Uint8Array(
     memory.buffer,
     cellsPointer,
-    universeWidth * universeHeight
+    (universeWidth * universeHeight) / 8
   );
 
   gameOfLifeCanvasContext.beginPath();
@@ -65,8 +72,11 @@ const drawCells = () => {
     for (let column = 0; column < universeWidth; column += 1) {
       const index = getIndex(row, column);
 
-      gameOfLifeCanvasContext.fillStyle =
-        cells[index] === Cell.Dead ? DEAD_COLOR : ALIVE_COLOR;
+      if (bitIsSet(index, cells)) {
+        gameOfLifeCanvasContext.fillStyle = ALIVE_COLOR;
+      } else {
+        gameOfLifeCanvasContext.fillStyle = DEAD_COLOR;
+      }
 
       gameOfLifeCanvasContext.fillRect(
         column * (CELL_SIZE + 1) + 1,
