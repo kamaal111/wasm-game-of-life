@@ -33,8 +33,8 @@ impl Cell {
 
 #[wasm_bindgen]
 pub struct Universe {
-    width: u32,
-    height: u32,
+    pub width: u32,
+    pub height: u32,
     cells: Vec<Cell>,
 }
 
@@ -72,6 +72,10 @@ impl Universe {
             height,
             cells,
         }
+    }
+
+    pub fn cells(&self) -> *const Cell {
+        self.cells.as_ptr()
     }
 
     pub fn render(&self) -> String {
