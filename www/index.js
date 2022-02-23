@@ -80,4 +80,4 @@ const drawCells = () => {
   gameOfLifeCanvasContext.stroke();
 };
 
-// requestAnimationFrame(renderLoop);
+requestAnimationFrame(renderLoop);

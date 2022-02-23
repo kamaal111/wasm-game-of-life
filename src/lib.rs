@@ -1,5 +1,6 @@
 mod utils;
 
+use js_sys::Math as JSMath;
 use std::fmt::{Display, Formatter, Result as FormatResult};
 use wasm_bindgen::prelude::*;
 
@@ -59,8 +60,8 @@ impl Universe {
         let height = 64;
 
         let cells = (0..(width * height))
-            .map(|i| {
-                if i % 2 == 0 || i % 7 == 0 {
+            .map(|_i| {
+                if JSMath::random() < 0.5 {
                     return Cell::Alive;
                 }
                 Cell::Dead
