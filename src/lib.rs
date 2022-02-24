@@ -84,6 +84,28 @@ impl Universe {
 
         self.cells = next;
     }
+
+    /// Set the width of the universe.
+    ///
+    /// Resets all cells to the dead state.
+    pub fn set_width(&mut self, width: u32) {
+        self.width = width;
+
+        let size = (width * self.height) as usize;
+
+        self.cells = self.make_dead_cells(size);
+    }
+
+    /// Set the height of the universe.
+    ///
+    /// Resets all cells to the dead state.
+    pub fn set_height(&mut self, height: u32) {
+        self.height = height;
+
+        let size = (height * self.width) as usize;
+
+        self.cells = self.make_dead_cells(size);
+    }
 }
 
 impl Universe {
@@ -106,5 +128,15 @@ impl Universe {
             }
         }
         count
+    }
+
+    fn make_dead_cells(&self, size: usize) -> FixedBitSet {
+        let mut cells = FixedBitSet::with_capacity(size);
+
+        for i in 0..size {
+            cells.set(i, false);
+        }
+
+        cells
     }
 }
