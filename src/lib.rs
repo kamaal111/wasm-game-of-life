@@ -109,6 +109,30 @@ impl Universe {
 }
 
 impl Universe {
+    /// Get the dead and alive values of the entire universe.
+    pub fn get_cells(&self) -> Vec<Cell> {
+        let mut cells = Vec::new();
+        for index in 0..self.cells.len() {
+            if self.cells[index] {
+                cells.push(Cell::Alive)
+            } else {
+                cells.push(Cell::Dead)
+            }
+        }
+        cells
+    }
+
+    /// Set cells to be alive in a universe by passing the row and column
+    /// of each cell as an array.
+    pub fn set_cells(&mut self, cells: &[(u32, u32)]) {
+        for (row, column) in cells.iter().cloned() {
+            let index = self.get_index(row, column);
+            self.cells.set(index, true);
+        }
+    }
+}
+
+impl Universe {
     fn get_index(&self, row: u32, column: u32) -> usize {
         (row * self.width + column) as usize
     }
