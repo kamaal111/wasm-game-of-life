@@ -9,9 +9,13 @@ const ALIVE_COLOR = "#000000";
 const universe = Universe.new();
 const { width: universeWidth, height: universeHeight } = universe;
 
-const gameOfLifeCanvas = document.getElementById("game-of-life-canvas");
-gameOfLifeCanvas.height = (CELL_SIZE + 1) * universeHeight + 1;
-gameOfLifeCanvas.width = (CELL_SIZE + 1) * universeWidth + 1;
+const gameOfLifeCanvas = (() => {
+  const canvas = document.getElementById("game-of-life-canvas");
+  canvas.height = (CELL_SIZE + 1) * universeHeight + 1;
+  canvas.width = (CELL_SIZE + 1) * universeWidth + 1;
+  return canvas;
+})();
+const playPauseButton = document.getElementById("play-pause");
 
 const gameOfLifeCanvasContext = gameOfLifeCanvas.getContext("2d");
 
