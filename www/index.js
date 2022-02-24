@@ -16,6 +16,8 @@ gameOfLifeCanvas.width = (CELL_SIZE + 1) * universeWidth + 1;
 const gameOfLifeCanvasContext = gameOfLifeCanvas.getContext("2d");
 
 const renderLoop = () => {
+  // debugger;
+
   universe.tick();
 
   drawGrid();
