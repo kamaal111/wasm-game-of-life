@@ -118,7 +118,7 @@ impl Universe {
             column -= 1;
         }
 
-        let alive_indices = [
+        let alive_indices: [usize; 5] = [
             self.get_index(row - 1, column),     // Top
             self.get_index(row, column + 1),     // right
             self.get_index(row + 1, column + 1), // bottom right
@@ -130,7 +130,7 @@ impl Universe {
             self.cells.set(index, true);
         }
 
-        let dead_indices = [
+        let dead_indices: [usize; 4] = [
             self.get_index(row, column),         // center
             self.get_index(row, column - 1),     // left
             self.get_index(row - 1, column - 1), // top left

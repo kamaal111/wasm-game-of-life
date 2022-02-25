@@ -136,7 +136,11 @@ gameOfLifeCanvas.addEventListener("click", (event) => {
     universeWidth - 1
   );
 
-  universe.toggle_cell(row, column);
+  if (event.metaKey) {
+    universe.insert_glider(row, column);
+  } else {
+    universe.toggle_cell(row, column);
+  }
 
   drawGrid();
   drawCells();
