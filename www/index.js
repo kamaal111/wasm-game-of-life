@@ -18,11 +18,18 @@ const gameOfLifeCanvas = (() => {
   return canvas;
 })();
 const playPauseButton = document.getElementById("play-pause");
+const ticksPerFrameSlider = document.getElementById("ticks-per-frame-slider");
+const ticksPerFrameLabel = document.getElementById("ticks-per-frame-label");
 
 const gameOfLifeCanvasContext = gameOfLifeCanvas.getContext("2d");
 
 const renderLoop = () => {
-  universe.tick();
+  let ticksPerFrame = Number(ticksPerFrameSlider.value);
+  if (Number.isNaN(ticksPerFrame)) ticksPerFrame = 1;
+
+  for (let i = 0; i < ticksPerFrame; i += 1) {
+    universe.tick();
+  }
 
   drawGrid();
   drawCells();
@@ -136,6 +143,17 @@ gameOfLifeCanvas.addEventListener("click", (event) => {
 playPauseButton.addEventListener("click", (_event) => {
   if (isPaused()) play();
   else pause();
+});
+
+ticksPerFrameSlider.addEventListener("change", (event) => {
+  const value = Number(event.target.value);
+  if (Number.isNaN(value)) return;
+
+  let textPrefix;
+  if (value === 1) textPrefix = "1 tick";
+  else textPrefix = `${value} ticks`;
+
+  ticksPerFrameLabel.textContent = `${textPrefix} per frame`;
 });
 
 play();
