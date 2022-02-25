@@ -1,0 +1,17 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    name: Test
+    timeout-minutes: 15
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Git - Checkout
+        uses: actions/checkout@v2
+
+      - name: Test
+        run: |
+          wasm-pack test --chrome --headless
