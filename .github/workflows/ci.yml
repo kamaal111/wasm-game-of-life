@@ -26,6 +26,9 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [test]
     steps:
+      - name: Git - Checkout
+        uses: actions/checkout@v2
+
       - name: Deploy
         run: |
           cd www
