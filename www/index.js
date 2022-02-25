@@ -18,6 +18,7 @@ const gameOfLifeCanvas = (() => {
   return canvas;
 })();
 const playPauseButton = document.getElementById("play-pause");
+const randomizeButton = document.getElementById("randomize");
 const ticksPerFrameSlider = document.getElementById("ticks-per-frame-slider");
 const ticksPerFrameLabel = document.getElementById("ticks-per-frame-label");
 
@@ -34,7 +35,7 @@ const renderLoop = () => {
   drawGrid();
   drawCells();
 
-  animationID = requestAnimationFrame(renderLoop);
+  // animationID = requestAnimationFrame(renderLoop);
 };
 
 const play = () => {
@@ -143,6 +144,17 @@ gameOfLifeCanvas.addEventListener("click", (event) => {
 playPauseButton.addEventListener("click", (_event) => {
   if (isPaused()) play();
   else pause();
+});
+
+randomizeButton.addEventListener("click", (_event) => {
+  pause();
+
+  universe.randomize_cells();
+
+  universe.tick();
+
+  drawGrid();
+  drawCells();
 });
 
 ticksPerFrameSlider.addEventListener("change", (event) => {

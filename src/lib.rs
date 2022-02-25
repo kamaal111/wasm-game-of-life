@@ -100,6 +100,17 @@ impl Universe {
         self.cells.set(index, !self.cells[index]);
     }
 
+    pub fn randomize_cells(&mut self) {
+        let size = (self.width * self.height) as usize;
+
+        let mut new_cells = FixedBitSet::with_capacity(size);
+        for i in 0..size {
+            new_cells.set(i, JSMath::random() < 0.5);
+        }
+
+        self.cells = new_cells;
+    }
+
     /// Set the width of the universe.
     ///
     /// Resets all cells to the dead state.
@@ -108,7 +119,7 @@ impl Universe {
 
         let size = (width * self.height) as usize;
 
-        self.cells = self.make_dead_cells(size);
+        self.cells = self.kill_all_cells(size);
     }
 
     /// Set the height of the universe.
@@ -119,7 +130,7 @@ impl Universe {
 
         let size = (height * self.width) as usize;
 
-        self.cells = self.make_dead_cells(size);
+        self.cells = self.kill_all_cells(size);
     }
 }
 
@@ -169,7 +180,7 @@ impl Universe {
         count
     }
 
-    fn make_dead_cells(&self, size: usize) -> FixedBitSet {
+    fn kill_all_cells(&self, size: usize) -> FixedBitSet {
         let mut cells = FixedBitSet::with_capacity(size);
 
         for i in 0..size {
