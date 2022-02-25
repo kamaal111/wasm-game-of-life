@@ -36,7 +36,7 @@ const renderLoop = () => {
   drawGrid();
   drawCells();
 
-  // animationID = requestAnimationFrame(renderLoop);
+  animationID = requestAnimationFrame(renderLoop);
 };
 
 const play = () => {
@@ -160,6 +160,11 @@ randomizeButton.addEventListener("click", (_event) => {
 
 killAllButton.addEventListener("click", (_event) => {
   pause();
+
+  universe.kill_all_cells();
+
+  drawGrid();
+  drawCells();
 });
 
 ticksPerFrameSlider.addEventListener("change", (event) => {
