@@ -43,11 +43,6 @@ const pause = () => {
 
 const isPaused = () => animationID === null;
 
-playPauseButton.addEventListener("click", (_event) => {
-  if (isPaused()) play();
-  else pause();
-});
-
 const drawGrid = () => {
   gameOfLifeCanvasContext.beginPath();
   gameOfLifeCanvasContext.strokeStyle = GRID_COLOR;
@@ -113,5 +108,34 @@ const drawCells = () => {
 
   gameOfLifeCanvasContext.stroke();
 };
+
+gameOfLifeCanvas.addEventListener("click", (event) => {
+  const boundingRect = gameOfLifeCanvas.getBoundingClientRect();
+
+  const scaleX = gameOfLifeCanvas.width / boundingRect.width;
+  const scaleY = gameOfLifeCanvas.height / boundingRect.height;
+
+  const canvasLeft = (event.clientX - boundingRect.left) * scaleX;
+  const canvasTop = (event.clientY - boundingRect.top) * scaleY;
+
+  const row = Math.min(
+    Math.floor(canvasTop / (CELL_SIZE + 1)),
+    universeHeight - 1
+  );
+  const column = Math.min(
+    Math.floor(canvasLeft / (CELL_SIZE + 1)),
+    universeWidth - 1
+  );
+
+  universe.toggle_cell(row, column);
+
+  drawGrid();
+  drawCells();
+});
+
+playPauseButton.addEventListener("click", (_event) => {
+  if (isPaused()) play();
+  else pause();
+});
 
 play();
