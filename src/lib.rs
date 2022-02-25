@@ -137,11 +137,13 @@ impl Universe {
     }
 
     pub fn insert_pulsar(&mut self, row: u32, column: u32) {
+        let standard_offset = 6;
+
         let corrected_row = {
             if row == 0 {
-                row + 6
-            } else if row >= (self.height - 7) {
-                let difference = row - (self.height - 7);
+                row + standard_offset
+            } else if row >= (self.height - standard_offset) {
+                let difference = row - (self.height - standard_offset);
                 row - difference
             } else {
                 row
@@ -149,18 +151,21 @@ impl Universe {
         };
         let corrected_column = {
             if column == 0 {
-                column + 6
-            } else if column >= (self.width - 7) {
-                let difference = column - (self.width - 7);
+                column + standard_offset
+            } else if column >= (self.width - standard_offset) {
+                let difference = column - (self.width - standard_offset);
                 column - difference
             } else {
                 column
             }
         };
 
-        for x in 0..3 {
-            for y in 0..3 {
-                let index = self.get_index((corrected_row + x) - 1, (corrected_column + y) - 1);
+        for x in 0..13 {
+            for y in 0..13 {
+                let index = self.get_index(
+                    (corrected_row + x) - standard_offset,
+                    (corrected_column + y) - standard_offset,
+                );
                 self.cells.set(index, true);
             }
         }
