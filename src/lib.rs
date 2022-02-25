@@ -45,12 +45,7 @@ impl Universe {
         let width = 64;
         let height = 64;
 
-        let size = (width * height) as usize;
-        let mut cells = FixedBitSet::with_capacity(size);
-
-        for i in 0..size {
-            cells.set(i, JSMath::random() < 0.5);
-        }
+        let cells = Universe::make_random_cells(width, height);
 
         Universe {
             width,
@@ -68,8 +63,8 @@ impl Universe {
 
         for row in 0..self.height {
             for column in 0..self.width {
-                let idx = self.get_index(row, column);
-                let cell = self.cells[idx];
+                let index = self.get_index(row, column);
+                let cell = self.cells[index];
                 let live_neighbors = self.live_neighbor_count(row, column);
 
                 let next_cell = match (cell, live_neighbors) {
@@ -88,7 +83,7 @@ impl Universe {
                     // All other cells remain in the same state.
                     (otherwise, _) => otherwise,
                 };
-                next.set(idx, next_cell);
+                next.set(index, next_cell);
             }
         }
 
@@ -101,14 +96,7 @@ impl Universe {
     }
 
     pub fn randomize_cells(&mut self) {
-        let size = (self.width * self.height) as usize;
-
-        let mut new_cells = FixedBitSet::with_capacity(size);
-        for i in 0..size {
-            new_cells.set(i, JSMath::random() < 0.5);
-        }
-
-        self.cells = new_cells;
+        self.cells = Universe::make_random_cells(self.width, self.height);
     }
 
     /// Set the width of the universe.
@@ -185,6 +173,17 @@ impl Universe {
 
         for i in 0..size {
             cells.set(i, false);
+        }
+
+        cells
+    }
+
+    fn make_random_cells(width: u32, height: u32) -> FixedBitSet {
+        let size = (width * height) as usize;
+        let mut cells = FixedBitSet::with_capacity(size);
+
+        for i in 0..size {
+            cells.set(i, JSMath::random() < 0.5);
         }
 
         cells

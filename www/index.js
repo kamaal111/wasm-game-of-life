@@ -19,6 +19,7 @@ const gameOfLifeCanvas = (() => {
 })();
 const playPauseButton = document.getElementById("play-pause");
 const randomizeButton = document.getElementById("randomize");
+const killAllButton = document.getElementById("kill-all");
 const ticksPerFrameSlider = document.getElementById("ticks-per-frame-slider");
 const ticksPerFrameLabel = document.getElementById("ticks-per-frame-label");
 
@@ -155,6 +156,10 @@ randomizeButton.addEventListener("click", (_event) => {
 
   drawGrid();
   drawCells();
+});
+
+killAllButton.addEventListener("click", (_event) => {
+  pause();
 });
 
 ticksPerFrameSlider.addEventListener("change", (event) => {
