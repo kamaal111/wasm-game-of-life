@@ -33,9 +33,21 @@ jobs:
       - name: Install wasm pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-      - name: Deploy
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build wasm
+        run: |
+          wasm-pack build
+
+      - name: Install node modules
         run: |
           cd www
-          npm run deploy
+          npm i
+
+      - name: Build
+        run: |
+          npm run build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.2.5
+        with:
+          branch: gh-pages
+          folder: www/dist
