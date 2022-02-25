@@ -95,6 +95,11 @@ impl Universe {
         self.cells = next;
     }
 
+    pub fn toggle_cell(&mut self, row: u32, column: u32) {
+        let index = self.get_index(row, column);
+        self.cells.set(index, !self.cells[index]);
+    }
+
     /// Set the width of the universe.
     ///
     /// Resets all cells to the dead state.
