@@ -6,6 +6,8 @@ const GRID_COLOR = "#CCCCCC";
 const DEAD_COLOR = "#FFFFFF";
 const ALIVE_COLOR = "#000000";
 
+let animationID = null;
+
 const universe = Universe.new();
 const { width: universeWidth, height: universeHeight } = universe;
 
@@ -20,15 +22,31 @@ const playPauseButton = document.getElementById("play-pause");
 const gameOfLifeCanvasContext = gameOfLifeCanvas.getContext("2d");
 
 const renderLoop = () => {
-  // debugger;
-
   universe.tick();
 
   drawGrid();
   drawCells();
 
-  requestAnimationFrame(renderLoop);
+  animationID = requestAnimationFrame(renderLoop);
 };
+
+const play = () => {
+  playPauseButton.textContent = "⏸";
+  renderLoop();
+};
+
+const pause = () => {
+  playPauseButton.textContent = "▶";
+  cancelAnimationFrame(animationID);
+  animationID = null;
+};
+
+const isPaused = () => animationID === null;
+
+playPauseButton.addEventListener("click", (_event) => {
+  if (isPaused()) play();
+  else pause();
+});
 
 const drawGrid = () => {
   gameOfLifeCanvasContext.beginPath();
@@ -96,4 +114,4 @@ const drawCells = () => {
   gameOfLifeCanvasContext.stroke();
 };
 
-requestAnimationFrame(renderLoop);
+play();
