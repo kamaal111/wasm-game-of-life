@@ -137,38 +137,41 @@ impl Universe {
     }
 
     pub fn insert_pulsar(&mut self, row: u32, column: u32) {
-        let standard_offset = 6;
+        let index = self.get_index(row, column);
+        self.cells.set(index, !self.cells[index]);
 
-        let corrected_row = {
-            if row == 0 {
-                row + standard_offset
-            } else if row >= (self.height - standard_offset) {
-                let difference = row - (self.height - standard_offset);
-                row - difference
-            } else {
-                row
-            }
-        };
-        let corrected_column = {
-            if column == 0 {
-                column + standard_offset
-            } else if column >= (self.width - standard_offset) {
-                let difference = column - (self.width - standard_offset);
-                column - difference
-            } else {
-                column
-            }
-        };
+        // let standard_offset = 6;
 
-        for x in 0..13 {
-            for y in 0..13 {
-                let index = self.get_index(
-                    (corrected_row + x) - standard_offset,
-                    (corrected_column + y) - standard_offset,
-                );
-                self.cells.set(index, true);
-            }
-        }
+        // let corrected_row = {
+        //     if row == 0 {
+        //         row + standard_offset
+        //     } else if row >= (self.height - standard_offset) {
+        //         let difference = row - (self.height - standard_offset);
+        //         row - difference
+        //     } else {
+        //         row
+        //     }
+        // };
+        // let corrected_column = {
+        //     if column == 0 {
+        //         column + standard_offset
+        //     } else if column >= (self.width - standard_offset) {
+        //         let difference = column - (self.width - standard_offset);
+        //         column - difference
+        //     } else {
+        //         column
+        //     }
+        // };
+
+        // for x in 0..13 {
+        //     for y in 0..13 {
+        //         let index = self.get_index(
+        //             (corrected_row + x) - standard_offset,
+        //             (corrected_column + y) - standard_offset,
+        //         );
+        //         self.cells.set(index, true);
+        //     }
+        // }
     }
 
     /// Set the width of the universe.

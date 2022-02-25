@@ -8,7 +8,8 @@
   },
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "deploy": "sh deploy.sh"
   },
   "repository": {
     "type": "git",
@@ -30,9 +31,10 @@
     "wasm-game-of-life": "file:../pkg"
   },
   "devDependencies": {
+    "copy-webpack-plugin": "^5.0.0",
+    "gh-pages": "^3.2.3",
     "webpack": "^4.29.3",
     "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.5",
-    "copy-webpack-plugin": "^5.0.0"
+    "webpack-dev-server": "^3.1.5"
   }
 }
