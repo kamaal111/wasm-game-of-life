@@ -108,7 +108,7 @@ impl Universe {
         let corrected_row = {
             if row == 0 {
                 row + 1
-            } else if row == (self.height - 1) {
+            } else if row >= (self.height - 1) {
                 row - 1
             } else {
                 row
@@ -117,7 +117,7 @@ impl Universe {
         let corrected_column = {
             if column == 0 {
                 column + 1
-            } else if column == (self.width - 1) {
+            } else if column >= (self.width - 1) {
                 column - 1
             } else {
                 column
@@ -132,6 +132,36 @@ impl Universe {
                 let is_left = x == 1 && y == 0;
                 self.cells
                     .set(index, !is_top_edges && !is_center && !is_left)
+            }
+        }
+    }
+
+    pub fn insert_pulsar(&mut self, row: u32, column: u32) {
+        let corrected_row = {
+            if row == 0 {
+                row + 6
+            } else if row >= (self.height - 7) {
+                let difference = row - (self.height - 7);
+                row - difference
+            } else {
+                row
+            }
+        };
+        let corrected_column = {
+            if column == 0 {
+                column + 6
+            } else if column >= (self.width - 7) {
+                let difference = column - (self.width - 7);
+                column - difference
+            } else {
+                column
+            }
+        };
+
+        for x in 0..3 {
+            for y in 0..3 {
+                let index = self.get_index((corrected_row + x) - 1, (corrected_column + y) - 1);
+                self.cells.set(index, true);
             }
         }
     }

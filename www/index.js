@@ -138,6 +138,8 @@ gameOfLifeCanvas.addEventListener("click", (event) => {
 
   if (event.metaKey) {
     universe.insert_glider(row, column);
+  } else if (event.shiftKey) {
+    universe.insert_pulsar(row, column);
   } else {
     universe.toggle_cell(row, column);
   }
