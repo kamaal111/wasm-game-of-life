@@ -42,7 +42,7 @@ jobs:
           cd www
           npm i
 
-      - name: Build
+      - name: Build project
         run: |
           cd www
           npm run build
