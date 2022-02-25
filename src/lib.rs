@@ -104,6 +104,44 @@ impl Universe {
         self.cells = Universe::make_dead_cells(size);
     }
 
+    pub fn insert_glider(&mut self, row: u32, column: u32) {
+        let mut row = row;
+        if row == 0 {
+            row += 1;
+        } else if row == (self.height - 1) {
+            row -= 1;
+        }
+        let mut column = column;
+        if column == 0 {
+            column += 1;
+        } else if column == (self.width - 1) {
+            column -= 1;
+        }
+
+        let alive_indices = [
+            self.get_index(row - 1, column),     // Top
+            self.get_index(row, column + 1),     // right
+            self.get_index(row + 1, column + 1), // bottom right
+            self.get_index(row + 1, column),     // bottom
+            self.get_index(row + 1, column - 1), // bottom left
+        ];
+
+        for index in alive_indices {
+            self.cells.set(index, true);
+        }
+
+        let dead_indices = [
+            self.get_index(row, column),         // center
+            self.get_index(row, column - 1),     // left
+            self.get_index(row - 1, column - 1), // top left
+            self.get_index(row - 1, column + 1), // top right
+        ];
+
+        for index in dead_indices {
+            self.cells.set(index, false)
+        }
+    }
+
     /// Set the width of the universe.
     ///
     /// Resets all cells to the dead state.

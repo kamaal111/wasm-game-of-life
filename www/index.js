@@ -36,7 +36,7 @@ const renderLoop = () => {
   drawGrid();
   drawCells();
 
-  animationID = requestAnimationFrame(renderLoop);
+  // animationID = requestAnimationFrame(renderLoop);
 };
 
 const play = () => {
