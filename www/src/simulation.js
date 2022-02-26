@@ -1,10 +1,14 @@
 import { Universe } from "wasm-game-of-life";
 import { memory } from "wasm-game-of-life/wasm_game_of_life_bg";
 
+import Profiler from "./profiler";
+
 const CELL_SIZE = 5; // px
 const GRID_COLOR = "#CCCCCC";
 const DEAD_COLOR = "#FFFFFF";
 const ALIVE_COLOR = "#000000";
+
+const profiler = new Profiler("fps");
 
 class Simulation {
   constructor(canvasID) {
@@ -90,6 +94,8 @@ class Simulation {
   }
 
   renderLoop(ticksPerFrame) {
+    profiler.render();
+
     if (Number.isNaN(ticksPerFrame)) ticksPerFrame = 1;
 
     for (let i = 0; i < ticksPerFrame; i += 1) {
