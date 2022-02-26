@@ -48,15 +48,15 @@ class Simulation {
     this.pause();
     this.universe.randomize_cells();
     this.universe.tick();
-    this.drawGrid();
-    this.drawCells();
+    drawGrid(this.universe, this.canvasContext);
+    drawCells(this.universe, this.canvasContext);
   }
 
   killAllCells() {
     this.pause();
     this.universe.kill_all_cells();
-    this.drawGrid();
-    this.drawCells();
+    drawGrid(this.universe, this.canvasContext);
+    drawCells(this.universe, this.canvasContext);
   }
 
   onCanvasClick(event) {
@@ -85,8 +85,8 @@ class Simulation {
       this.universe.toggle_cell(row, column);
     }
 
-    this.drawGrid();
-    this.drawCells();
+    drawGrid(this.universe, this.canvasContext);
+    drawCells(this.universe, this.canvasContext);
   }
 
   renderLoop(ticksPerFrame) {
@@ -96,81 +96,75 @@ class Simulation {
       this.universe.tick();
     }
 
-    this.drawGrid();
-    this.drawCells();
+    drawGrid(this.universe, this.canvasContext);
+    drawCells(this.universe, this.canvasContext);
 
-    this.animationID = requestAnimationFrame(() =>
+    this.animationID = requestAnimationFrame((_animationFrame) =>
       this.renderLoop(ticksPerFrame)
     );
   }
-
-  drawGrid() {
-    this.canvasContext.beginPath();
-    this.canvasContext.strokeStyle = GRID_COLOR;
-
-    // Vertical lines.
-    for (let i = 0; i <= this.universeWidth; i += 1) {
-      this.canvasContext.moveTo(i * (CELL_SIZE + 1) + 1, 0);
-      this.canvasContext.lineTo(
-        i * (CELL_SIZE + 1) + 1,
-        (CELL_SIZE + 1) * this.universeHeight + 1
-      );
-    }
-
-    // Horizontal lines.
-    for (let i = 0; i <= this.universeHeight; i += 1) {
-      this.canvasContext.moveTo(0, i * (CELL_SIZE + 1) + 1);
-      this.canvasContext.lineTo(
-        (CELL_SIZE + 1) * this.universeWidth + 1,
-        i * (CELL_SIZE + 1) + 1
-      );
-    }
-
-    this.canvasContext.stroke();
-  }
-
-  drawCells() {
-    const cellsPointer = this.universe.cells();
-
-    const cells = new Uint8Array(
-      memory.buffer,
-      cellsPointer,
-      (this.universeWidth * this.universeHeight) / 8
-    );
-
-    this.canvasContext.beginPath();
-
-    for (let row = 0; row < this.universeHeight; row += 1) {
-      for (let column = 0; column < this.universeWidth; column += 1) {
-        const index = this.getIndex(row, column);
-
-        if (this.bitIsSet(index, cells)) {
-          this.canvasContext.fillStyle = ALIVE_COLOR;
-        } else {
-          this.canvasContext.fillStyle = DEAD_COLOR;
-        }
-
-        this.canvasContext.fillRect(
-          column * (CELL_SIZE + 1) + 1,
-          row * (CELL_SIZE + 1) + 1,
-          CELL_SIZE,
-          CELL_SIZE
-        );
-      }
-    }
-
-    this.canvasContext.stroke();
-  }
-
-  getIndex(row, column) {
-    return row * this.universeWidth + column;
-  }
-
-  bitIsSet(number, array) {
-    const byte = Math.floor(number / 8);
-    const mask = 1 << number % 8;
-    return (array[byte] & mask) === mask;
-  }
 }
+
+const getIndex = (row, column, width) => row * width + column;
+
+const bitIsSet = (number, array) => {
+  const byte = Math.floor(number / 8);
+  const mask = 1 << number % 8;
+  return (array[byte] & mask) === mask;
+};
+
+const drawCells = (universe, canvasContext) => {
+  const cellsPointer = universe.cells();
+  const { height, width } = universe;
+  const cells = new Uint8Array(
+    memory.buffer,
+    cellsPointer,
+    (width * height) / 8
+  );
+
+  canvasContext.beginPath();
+
+  for (let row = 0; row < height; row += 1) {
+    for (let column = 0; column < width; column += 1) {
+      const index = getIndex(row, column, width);
+
+      if (bitIsSet(index, cells)) {
+        canvasContext.fillStyle = ALIVE_COLOR;
+      } else {
+        canvasContext.fillStyle = DEAD_COLOR;
+      }
+
+      canvasContext.fillRect(
+        column * (CELL_SIZE + 1) + 1,
+        row * (CELL_SIZE + 1) + 1,
+        CELL_SIZE,
+        CELL_SIZE
+      );
+    }
+  }
+
+  canvasContext.stroke();
+};
+
+const drawGrid = (universe, canvasContext) => {
+  canvasContext.beginPath();
+  canvasContext.strokeStyle = GRID_COLOR;
+
+  const { height, width } = universe;
+
+  // Vertical lines.
+  for (let i = 0; i <= width; i += 1) {
+    canvasContext.moveTo(i * (CELL_SIZE + 1) + 1, 0);
+    canvasContext.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1);
+  }
+
+  // Horizontal lines.
+  for (let i = 0; i <= height; i += 1) {
+    canvasContext.moveTo(0, i * (CELL_SIZE + 1) + 1);
+    canvasContext.lineTo((CELL_SIZE + 1) * width + 1, i * (CELL_SIZE + 1) + 1);
+  }
+
+  canvasContext.stroke();
+};
 
 export default Simulation;
